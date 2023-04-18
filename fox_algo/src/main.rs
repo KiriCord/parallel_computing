@@ -27,16 +27,14 @@ fn fox_algo(matrix_a: &Matrix<i32>, matrix_b: &Matrix<i32>) -> Matrix<i32> {
 
     let temp_result: Vec<_> = (0..matrix_a.len())
         .into_par_iter()
-        .map(|stage| {
-            (0..matrix_a.len()).into_par_iter().map(move |i| {
+        .flat_map(|stage| {
+            (0..matrix_a.len()).into_par_iter().flat_map(move |i| {
                 let k = (i + stage) % matrix_a.len();
                 (0..matrix_b.len())
                     .into_par_iter()
                     .map(move |j| (i, j, matrix_a[i][k] * matrix_b[k][j]))
             })
         })
-        .flatten()
-        .flatten()
         .collect();
 
     for (i, j, item) in temp_result.iter() {
@@ -67,8 +65,8 @@ fn print_matrix(matrix: &Matrix<i32>) {
 
 fn main() {
     {
-        let matrix_test_a = &generate_square_matrix(3, 0..10);
-        let matrix_test_b = &generate_square_matrix(3, 0..10);
+        let matrix_test_a = &generate_square_matrix(3, 0..50);
+        let matrix_test_b = &generate_square_matrix(3, 0..50);
         let result = fox_algo(matrix_test_a, matrix_test_b);
         print_matrix(matrix_test_a);
         print_matrix(matrix_test_b);
@@ -77,5 +75,5 @@ fn main() {
 
     let matrix_a = &generate_square_matrix(MATRIX_SIZE, 0..100);
     let matrix_b = &generate_square_matrix(MATRIX_SIZE, 0..100);
-    generate_bench!(5, [4, 8, 16], fox_algo, matrix_a, matrix_b);
+    generate_bench!(5, [2, 4, 8, 16], fox_algo, matrix_a, matrix_b);
 }
