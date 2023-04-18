@@ -1,27 +1,27 @@
-use std::{
-    fmt::{self, Display, Formatter},
-    time::Duration,
-};
+use std::fmt::{self, Display, Formatter};
+
+use super::{common::bench_rayon, stats::Statistics};
 
 #[derive(Debug)]
 pub struct BenchResultSingleThreaded {
-    pub duration: Duration,
-    pub repeat_count: i32,
+    pub stats: Statistics,
+}
+
+impl BenchResultSingleThreaded {
+    pub fn bench_rayon<F: Fn() + Send + Sync>(
+        f: F,
+        repeat_count: usize,
+    ) -> BenchResultSingleThreaded {
+        let stats = bench_rayon(&f, 1, repeat_count).into();
+
+        BenchResultSingleThreaded { stats }
+    }
 }
 
 impl Display for BenchResultSingleThreaded {
     fn fmt(&self, f: &mut Formatter) -> fmt::Result {
         writeln!(f, "1 поток")?;
-        writeln!(
-            f,
-            "Общее время выполнения: {:.3} секунд",
-            self.duration.as_secs_f64()
-        )?;
-        writeln!(f, "Кол-во выполнений {}", self.repeat_count)?;
-        write!(
-            f,
-            "Среднее время выполнение {:.3} секунд",
-            self.duration.as_secs_f64() / (self.repeat_count as f64)
-        )
+
+        write!(f, "{}", self.stats)
     }
 }

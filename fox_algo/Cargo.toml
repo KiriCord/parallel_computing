@@ -1,5 +1,5 @@
 [package]
-name = "bencher"
+name = "fox_algo"
 version = "0.1.0"
 edition = "2021"
 
@@ -7,3 +7,5 @@ edition = "2021"
 
 [dependencies]
 rayon = "1.7.0"
+bencher = {path = "../bencher"}
+common = {path = "../common"}
